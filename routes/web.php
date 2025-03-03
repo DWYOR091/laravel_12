@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\PhoneController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -16,3 +18,9 @@ Route::prefix('blog')->group(function () {
     Route::put('/update/{blog}', [BlogController::class, 'update'])->name('blog.update');
     Route::get('/detail/{blog}', [BlogController::class, 'show'])->name('blog.show');
 });
+
+Route::prefix('user')->group(function () {
+    Route::get('/', [UserController::class, 'index'])->name('user.index');
+});
+
+Route::get('/phone', [PhoneController::class, 'index']);
