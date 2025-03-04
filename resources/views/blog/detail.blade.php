@@ -7,7 +7,7 @@
         <div class="row">
             <div class="col-6">
                 <h3 class="fw-bold">Post Blog</h3>
-                <div class="card shadow mt-4" style="width: 18rem;">
+                <div class="card shadow my-4" style="width: 18rem;">
                     <div class="card-body">
                         <h5 class="card-title">{{ $blog->title }}</h5>
                         <hr>
@@ -15,6 +15,18 @@
                         <p class="card-text">{{ $blog->description }}</p>
                     </div>
                 </div>
+                Tags:
+                @if ($blog->tags->count() == 0)
+                    <span>-</span>
+                @endif
+
+
+                @foreach ($blog->tags as $tag)
+                    <div class="rounded d-inline shadow-sm mx-1 p-1 border-primary text-danger text-center"
+                        style="background: rgb(223, 218, 218)">
+                        <span class="">{{ $tag->name }}</span>
+                    </div>
+                @endforeach
             </div>
             <div class="col-6">
                 @if ($errors->any())
