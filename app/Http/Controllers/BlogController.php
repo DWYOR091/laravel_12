@@ -39,6 +39,9 @@ class BlogController extends Controller
      */
     public function show(Blog $blog)
     {
+        $blog = $blog->with('comments')->find($blog->id);
+        // dd($blog);
+        // return $blog;
         return view('blog.detail', compact('blog'));
     }
 

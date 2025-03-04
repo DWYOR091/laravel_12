@@ -17,20 +17,38 @@
                 </div>
             </div>
             <div class="col-6">
-                <h3 class="fw-bold">Comments</h3>
+                @if ($errors->any())
+                    <div class="alert alert-danger" id="flas-msg">
+                        <ul>
+                            @foreach ($errors->all() as $e)
+                                <li>{{ $e }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                {{-- success --}}
+                @if (session('message'))
+                    <div class="alert alert-success" id="flash-msg">
+                        <p>{{ session('message') }}</p>
+                    </div>
+                @endif
+                <form action="{{ url('comment/' . $blog->id) }}" method="POST" class="mb-5">
+                    @method('POST')
+                    @csrf
+                    <label for="commentInput" class="form-label fw-medium">Comment</label>
+                    <textarea name="comment" class="form-control" id="commentInput" cols="50" rows="5"
+                        placeholder="input comment here!"></textarea>
+                    <button class="btn btn-info my-3" type="submit">Save</button>
+                </form>
+                <h3 class="fw-bold">Comments:</h3>
                 <ol class="mt-4">
-                    <li>
-                        <div>
-                            <h5>Ahamad</h5>
-                            <p>Kocak</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div>
-                            <h5>Rifqi</h5>
-                            <p>Kocak gaming</p>
-                        </div>
-                    </li>
+                    @foreach ($blog->comments as $b)
+                        <li>
+                            <div>
+                                <h5>{{ $b->comment_text }}</h5>
+                            </div>
+                        </li>
+                    @endforeach
                 </ol>
             </div>
         </div>
