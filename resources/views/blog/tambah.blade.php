@@ -18,7 +18,17 @@
                             <textarea name="description" class="form-control" id="inputDescription" rows="5"
                                 placeholder="Input Description Here!"></textarea>
                         </div>
-                        <div>
+                        <label for="" class="form-label">Tags</label>
+                        @foreach ($tags as $key => $tag)
+                            <div class="form-check">
+                                <input class="form-check-input" name="tags[]" type="checkbox" value="{{ $tag->id }}"
+                                    id="tags{{ $key }}">
+                                <label class="form-check-label" for="tags{{ $key }}">
+                                    {{ $tag->name }}
+                                </label>
+                            </div>
+                        @endforeach
+                        <div class="mt-3">
                             <button type="submit" class="btn btn-success">Save</button>
                         </div>
                     </div>

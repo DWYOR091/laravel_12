@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 
 class BlogController extends Controller
@@ -21,7 +22,8 @@ class BlogController extends Controller
      */
     public function create()
     {
-        return view('blog.tambah');
+        $tags = Tag::all();
+        return view('blog.tambah', ['tags' => $tags]);
     }
 
     /**
@@ -29,8 +31,14 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all();
-        Blog::create($data)->with;
+        // return $request->tags;
+        $blog = Blog::create(
+            [
+                'title' => $request->title,
+                'description' => $request->description
+            ]
+        );
+        $blog->tags()->attach($request->tags); //attach menambahkan banyak
         return redirect()->route('blog.index')->with('success', "Data <strong>" . $request->title . "</strong> Sudah Tersimpan!");
     }
 
@@ -50,7 +58,13 @@ class BlogController extends Controller
      */
     public function edit(Blog $blog)
     {
-        return view('blog.update', ['blog' => $blog]);
+        $blog->load('tags');
+        $tags = Tag::all();
+        // $blog = $blog->with('tags')->find($blog->id);
+        //eager loading
+
+        // return $blog
+        return view('blog.update', ['blog' => $blog, 'tags' => $tags]);
     }
 
     /**
@@ -60,10 +74,17 @@ class BlogController extends Controller
     {
         $validateData = $request->validate([
             'title' => 'required|max:30',
-            'description' => 'required'
+            'description' => 'required',
         ]);
 
+        //detach artinya hapus, aattach artinya tambahin untuk relasi !!
+        // $blog->tags()->detach($blog->tags);
+        // $blog->tags()->attach($request->tags);
+
+        //pake sync lebih fleksibel
+        $blog->tags()->sync($request->tags);
         $blog->update($validateData);
+
         return redirect()->route('blog.index')->with('success', "Data <strong>" . $request->title . "</strong> Sudah Terupdate!");
     }
 
