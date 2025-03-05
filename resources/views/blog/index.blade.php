@@ -18,13 +18,15 @@
                     <th>No</th>
                     <th>Title</th>
                     <th>Description</th>
+                    <th>Tags</th>
                     <th>Action</th>
                 </thead>
                 <tbody>
                     @foreach ($blogs as $b)
                         <tr>
-                            <td>{{ $blogs->firstItem() + $loop->index }}</td>
+                            {{-- <td>{{ $blogs->firstItem() + $loop->index }}</td> --}}
                             <td>{{ $b->title }}</td>
+                            <td>{{ $b->tags }}</td>
                             <td>{{ $b->description }}</td>
                             <td>
                                 <div class="d-flex gap-2">
@@ -42,7 +44,7 @@
                     @endforeach
                 </tbody>
             </table>
-            <div>{{ $blogs->onEachSide(1)->links() }}</div>
+            {{-- <div>{{ $blogs->onEachSide(1)->links() }}</div> --}}
         </div>
     </section>
 @endsection

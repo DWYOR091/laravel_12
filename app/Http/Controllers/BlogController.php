@@ -5,15 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Blog;
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BlogController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $req)
     {
-        $blogs = Blog::paginate(5);
+        $blogs = Blog::with('tags')->where('title', 'like', '%' . $req->title . '%')->orderBy('id', 'desc')->get();
         return view('blog.index', ['blogs' => $blogs]);
     }
 
