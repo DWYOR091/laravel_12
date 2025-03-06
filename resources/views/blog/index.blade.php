@@ -17,16 +17,19 @@
                 <thead>
                     <th>No</th>
                     <th>Title</th>
-                    <th>Description</th>
                     <th>Tags</th>
+                    <th>Image</th>
+                    <th>Description</th>
                     <th>Action</th>
                 </thead>
                 <tbody>
                     @foreach ($blogs as $b)
                         <tr>
                             {{-- <td>{{ $blogs->firstItem() + $loop->index }}</td> --}}
+                            <td>{{ $loop->index + 1 }}</td>
                             <td>{{ $b->title }}</td>
                             <td>{{ $b->tags }}</td>
+                            <td>{{ $b->image ? $b->image->url : '' }}</td>
                             <td>{{ $b->description }}</td>
                             <td>
                                 <div class="d-flex gap-2">

@@ -19,6 +19,7 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone Number</th>
+                    <th>Image</th>
                     <th>Action</th>
                 </thead>
                 <tbody>
@@ -28,6 +29,7 @@
                             <td>{{ $u->name }}</td>
                             <td>{{ $u->email }}</td>
                             <td>{{ $u->phone ? $u->phone->number : '-' }}</td>
+                            <td>{{ $u->image ? $u->image->url : '-' }}</td>
                             <td>
                                 <div class="d-flex gap-2">
                                     <form action="{{ route('blog.destroy', $u->id) }}" method="POST"
