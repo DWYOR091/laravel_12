@@ -19,17 +19,25 @@
                     <th>Title</th>
                     <th>Tags</th>
                     <th>Image</th>
+                    <th>Rating</th>
                     <th>Description</th>
                     <th>Action</th>
                 </thead>
                 <tbody>
                     @foreach ($blogs as $b)
                         <tr>
-                            {{-- <td>{{ $blogs->firstItem() + $loop->index }}</td> --}}
-                            <td>{{ $loop->index + 1 }}</td>
+                            <td>{{ $blogs->firstItem() + $loop->index }}</td>
+                            {{-- <td>{{ $loop->index + 1 }}</td> --}}
                             <td>{{ $b->title }}</td>
-                            <td>{{ $b->tags }}</td>
+                            <td>
+                                @foreach ($b->tags as $tag)
+                                    {{ $tag->name }} {{ $loop->last ? '.' : ', ' }}
+                                @endforeach
+                            </td>
                             <td>{{ $b->image ? $b->image->url : '' }}</td>
+                            <td>
+                                {{ $b->rating->pluck('rating_value')->avg() }}
+                            </td>
                             <td>{{ $b->description }}</td>
                             <td>
                                 <div class="d-flex gap-2">
@@ -47,7 +55,7 @@
                     @endforeach
                 </tbody>
             </table>
-            {{-- <div>{{ $blogs->onEachSide(1)->links() }}</div> --}}
+            <div>{{ $blogs->onEachSide(1)->links() }}</div>
         </div>
     </section>
 @endsection
