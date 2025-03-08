@@ -20,6 +20,7 @@
                     <th>Tags</th>
                     <th>Image</th>
                     <th>Rating</th>
+                    <th>Kategori</th>
                     <th>Description</th>
                     <th>Action</th>
                 </thead>
@@ -37,6 +38,11 @@
                             <td>{{ $b->image ? $b->image->url : '' }}</td>
                             <td>
                                 {{ $b->rating->pluck('rating_value')->avg() }}
+                            </td>
+                            <td>
+                                @foreach ($b->categories as $c)
+                                    {{ $c->count() < 1 ? 'kosong' : $c->name }}{{ $loop->last ? '' : ',' }}
+                                @endforeach
                             </td>
                             <td>{{ $b->description }}</td>
                             <td>

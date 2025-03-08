@@ -47,4 +47,9 @@ class Blog extends Model
     {
         return $this->morphMany(Rating::class, 'ratingable');
     }
+
+    public function categories()
+    {
+        return $this->morphToMany(Category::class, 'categoriable', 'categoriable');
+    }
 }

@@ -14,7 +14,7 @@ class BlogController extends Controller
      */
     public function index(Request $req)
     {
-        $blogs = Blog::with(['tags', 'image', 'rating'])->where('title', 'like', '%' . $req->title . '%')->orderBy('id', 'desc')->paginate(5);
+        $blogs = Blog::with(['tags', 'image', 'rating', 'categories'])->where('title', 'like', '%' . $req->title . '%')->orderBy('id', 'asc')->paginate(5);
         // return $blogs;
         return view('blog.index', ['blogs' => $blogs]);
     }
