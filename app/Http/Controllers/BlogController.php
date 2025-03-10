@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Blog;
 use App\Models\Tag;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class BlogController extends Controller
 {
@@ -14,7 +16,7 @@ class BlogController extends Controller
      */
     public function index(Request $req)
     {
-        $blogs = Blog::with(['tags', 'image', 'rating', 'categories'])->where('title', 'like', '%' . $req->title . '%')->orderBy('id', 'asc')->paginate(5);
+        $blogs = Blog::with(['tags', 'image', 'rating', 'categories', 'author'])->where('title', 'like', '%' . $req->title . '%')->orderBy('id', 'asc')->paginate(5);
         // return $blogs;
         return view('blog.index', ['blogs' => $blogs]);
     }
@@ -60,8 +62,23 @@ class BlogController extends Controller
      */
     public function edit(Blog $blog)
     {
+        //cara 1
+        // if (!Gate::allows('blog-namabebas', $blog)) {
+        //     abort(403);
+        // }
+
+        //cara 2 gates
+        // Gate::authorize('update-post', $blog);
+
+        //cara 3 custom msg
+        $response = Gate::inspect('blog-namabebas', $blog);
+        if ($response->denied()) {
+            abort(403, $response->message());
+        }
+
         $blog->load('tags');
         $tags = Tag::all();
+
         // $blog = $blog->with('tags')->find($blog->id);
         //eager loading
 

@@ -17,6 +17,7 @@
                 <thead>
                     <th>No</th>
                     <th>Title</th>
+                    <th>Author</th>
                     <th>Tags</th>
                     <th>Image</th>
                     <th>Rating</th>
@@ -30,6 +31,7 @@
                             <td>{{ $blogs->firstItem() + $loop->index }}</td>
                             {{-- <td>{{ $loop->index + 1 }}</td> --}}
                             <td>{{ $b->title }}</td>
+                            <td>{{ $b->author ? $b->author->name : '-' }}</td>
                             <td>
                                 @foreach ($b->tags as $tag)
                                     {{ $tag->name }} {{ $loop->last ? '.' : ', ' }}
@@ -46,18 +48,22 @@
                             </td>
                             <td>{{ $b->description }}</td>
                             <td>
-                                <div class="d-flex gap-2">
-                                    <form action="{{ route('blog.destroy', $b->id) }}" method="POST"
-                                        onsubmit="return confirm('Anda yakin?')">
-                                        @method('DELETE')
-                                        @csrf
-                                        <button type="submit" class="btn btn-danger">Delete</button>
-                                    </form>
-                                    <a href="{{ route('blog.edit', $b->id) }}" class="btn btn-info">Update</a>
-                                    <a href="{{ route('blog.show', $b->id) }}" class="btn btn-warning">Detail</a>
-                                </div>
+                                @if (Auth::user()->id == $b->author_id)
+                                    <div class="d-flex gap-2">
+                                        <form action="{{ route('blog.destroy', $b->id) }}" method="POST"
+                                            onsubmit="return confirm('Anda yakin?')">
+                                            @method('DELETE')
+                                            @csrf
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                        <a href="{{ route('blog.edit', $b->id) }}" class="btn btn-info">Update</a>
+                                        <a href="{{ route('blog.show', $b->id) }}" class="btn btn-warning">Detail</a>
+                                    </div>
                             </td>
-                        </tr>
+                    @endif
+
+                    {{-- {{ Auth::user()->id }} --}}
+                    </tr>
                     @endforeach
                 </tbody>
             </table>
