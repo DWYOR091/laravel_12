@@ -60,7 +60,7 @@ class BlogController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Blog $blog)
+    public function edit(Request $request, Blog $blog)
     {
         //cara 1
         // if (!Gate::allows('blog-namabebas', $blog)) {
@@ -71,10 +71,19 @@ class BlogController extends Controller
         // Gate::authorize('update-post', $blog);
 
         //cara 3 custom msg
-        $response = Gate::inspect('blog-namabebas', $blog);
-        if ($response->denied()) {
-            abort(403, $response->message());
-        }
+        // $response = Gate::inspect('blog-namabebas', $blog);
+        // if ($response->denied()) {
+        //     abort(403, $response->message());
+        // }
+
+        //cara pakai policy
+        //lewat user
+        // if ($request->user()->cannot('update', $blog)) {
+        //     abort(403);
+        // }
+
+        //custom error
+        Gate::authorize('update', $blog);
 
         $blog->load('tags');
         $tags = Tag::all();
