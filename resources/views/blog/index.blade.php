@@ -37,7 +37,9 @@
                                     {{ $tag->name }} {{ $loop->last ? '.' : ', ' }}
                                 @endforeach
                             </td>
-                            <td>{{ $b->image ? $b->image->url : '' }}</td>
+                            {{-- <td>{{ $b->image ? $b->image->url : '' }}</td> --}}
+                            <td><img src="{{ $b->image ? asset('storage/' . $b->image->url) : '' }}" alt="gambar"
+                                    class="img-thumbnail"></td>
                             <td>
                                 {{ $b->rating->pluck('rating_value')->avg() }}
                             </td>

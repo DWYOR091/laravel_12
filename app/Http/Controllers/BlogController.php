@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use App\Models\Image;
 use App\Models\Tag;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
@@ -36,13 +39,26 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         // return $request->tags;
-        $blog = Blog::create(
-            [
-                'title' => $request->title,
-                'description' => $request->description
-            ]
-        );
+        $validateData = $request->validate([
+            'title' => 'required',
+            'description' => 'required',
+            // 'image' => 'required',
+            // 'image' => 'required|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
+
+        $validateData['author_id'] = Auth::id();
+
+        $blog = Blog::create($validateData);
         $blog->tags()->attach($request->tags); //attach menambahkan banyak
+        if ($request->hasFile('image')) {
+            $ext = $request->file('image')->getClientOriginalExtension();
+            $path = $request->file('image')->storeAs('images', time() . '.' . $ext, 'public');
+            // Storage::putFile('');
+            $blog->image()->create([
+                'url' => $path,
+            ]);
+        }
+        // return $blog;
         return redirect()->route('blog.index')->with('success', "Data <strong>" . $request->title . "</strong> Sudah Tersimpan!");
     }
 
@@ -108,11 +124,23 @@ class BlogController extends Controller
         //detach artinya hapus, aattach artinya tambahin untuk relasi !!
         // $blog->tags()->detach($blog->tags);
         // $blog->tags()->attach($request->tags);
+        // dd($blog->image, $blog->image->url, Storage::disk('public')->exists('images/1741676801.png'));
+
 
         //pake sync lebih fleksibel
+        if ($request->hasFile('image')) {
+            if ($blog->image && Storage::disk('public')->exists($blog->image->url)) {
+                Storage::disk('public')->delete($blog->image->url);
+            }
+            $ext = $request->file('image')->getClientOriginalExtension();
+            $path = $request->file('image')->storeAs('images', time() . '.' . $ext, 'public');
+            $blog->image()->update([
+                'url' => $path
+            ]);
+        }
+
         $blog->tags()->sync($request->tags);
         $blog->update($validateData);
-
         return redirect()->route('blog.index')->with('success', "Data <strong>" . $request->title . "</strong> Sudah Terupdate!");
     }
 
