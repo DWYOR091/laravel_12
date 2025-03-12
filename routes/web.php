@@ -8,6 +8,9 @@ use App\Http\Controllers\PhoneController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureTokenIsValid;
+use App\Mail\CobaMail;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -43,4 +46,11 @@ Route::middleware('guest')->group(function () {
     //login
     Route::get('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/login/authenticate', [AuthController::class, 'authenticate'])->name('login.auth');
+});
+
+
+//mail
+Route::get('/mailtesting', function () {
+    Mail::to('kocak@gmail.com')->send(new CobaMail());
+    return view('mail.welcome');
 });
