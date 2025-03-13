@@ -2,24 +2,27 @@
 
 namespace App\Mail;
 
+use Log;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Attachment;
 
 class CobaMail extends Mailable
 {
     use Queueable, SerializesModels;
+    protected $user;
 
     /**
      * Create a new message instance.
      */
-    public function __construct()
-    {
-        //
+    public function __construct(
+        $user
+    ) {
+        $this->user = $user;
     }
 
     /**
@@ -36,15 +39,22 @@ class CobaMail extends Mailable
         );
     }
 
+
     /**
      * Get the message content definition.
      */
     public function content(): Content
     {
+
         return new Content(
             view: 'mail.welcome',
+            with: [
+                'userEmail' => $this->user['email'],
+                'userName' => $this->user['name'],
+            ]
         );
     }
+
 
     /**
      * Get the attachments for the message.
@@ -54,7 +64,7 @@ class CobaMail extends Mailable
     public function attachments(): array
     {
         return [
-            Attachment::fromStorageDisk('public', 'images/1741679785.png')
+            // Attachment::fromStorageDisk('public', 'images/1741679785.png')
         ];
     }
 }

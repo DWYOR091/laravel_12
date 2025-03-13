@@ -8,6 +8,7 @@ use App\Http\Controllers\PhoneController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureTokenIsValid;
+use App\Jobs\ProcessMail;
 use App\Mail\CobaMail;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Support\Facades\Mail;
@@ -51,6 +52,31 @@ Route::middleware('guest')->group(function () {
 
 //mail
 Route::get('/mailtesting', function () {
-    Mail::to('kocak@gmail.com')->send(new CobaMail());
-    return view('mail.welcome');
+    $users = [
+        [
+            'email' => 'aaa@gmail.com',
+            'name' => 'aaa',
+        ],
+        [
+            'email' => 'bbb@gmail.com',
+            'name' => 'bbb',
+        ],
+        [
+            'email' => 'ccc@gmail.com',
+            'name' => 'ccc',
+        ],
+        [
+            'email' => 'ddd@gmail.com',
+            'name' => 'ddd',
+        ],
+        [
+            'email' => 'eee@gmail.com',
+            'name' => 'eee',
+        ],
+
+    ];
+    foreach ($users as $key => $user) {
+        ProcessMail::dispatch($user)->onQueue('kirim-mail');
+    }
+    return 'email terkirim!!';
 });
