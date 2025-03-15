@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -36,5 +40,27 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('login');
+    }
+
+    public function register(): View
+    {
+        return view('register');
+    }
+
+    public function createNewUser(Request $req)
+    {
+        $credentials = $req->validate([
+            'name' => 'required',
+            'email' => 'email|required',
+            'password' => 'required'
+        ]);
+
+
+        $credentials['password'] = Hash::make($credentials['password']);
+
+        $user = User::create($credentials);
+        event(new Registered($user));
+        Auth::login($user);
+        return redirect()->route('blog.index');
     }
 }

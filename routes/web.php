@@ -10,6 +10,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureTokenIsValid;
 use App\Jobs\ProcessMail;
 use App\Mail\CobaMail;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -18,7 +20,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('blog')->group(function () {
         Route::get('/', [BlogController::class, 'index'])->name('blog.index');
@@ -47,8 +49,25 @@ Route::middleware('guest')->group(function () {
     //login
     Route::get('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/login/authenticate', [AuthController::class, 'authenticate'])->name('login.auth');
+    Route::get('/register', [AuthController::class, 'register'])->name('register');
+    Route::post('/createNewUser', [AuthController::class, 'createNewUser'])->name('createNewUser');
 });
 
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+
+    return redirect('/blog');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 //mail
 Route::get('/mailtesting', function () {
